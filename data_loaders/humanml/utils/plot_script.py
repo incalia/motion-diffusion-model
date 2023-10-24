@@ -63,9 +63,11 @@ def plot_3d_motion(save_path, kinematic_tree, joints, title, dataset, figsize=(3
     elif dataset in ['humanact12', 'uestc']:
         data *= -1.5 # reverse axes, scale for visualization
 
-    fig = plt.figure(figsize=figsize)
-    plt.tight_layout()
-    ax = p3.Axes3D(fig)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(projection='3d')
+    plt.tight_layout()                 
+    
     init()
     MINS = data.min(axis=0).min(axis=0)
     MAXS = data.max(axis=0).max(axis=0)
