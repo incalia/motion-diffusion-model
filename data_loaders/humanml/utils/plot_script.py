@@ -92,8 +92,11 @@ def plot_3d_motion(save_path, kinematic_tree, joints, title, dataset, figsize=(3
 
     def update(index):
         #         print(index)
-        ax.lines = []
-        ax.collections = []
+        # BUGFIX: ax.lines and ax.collections attributes do not exist
+        for i in range(len(ax.lines)):
+            ax.lines[0].remove()
+        for i in range(len(ax.collections)):
+            ax.collections[0].remove()
         ax.view_init(elev=120, azim=-90)
         ax.dist = 7.5
         #         ax =
