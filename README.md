@@ -10,8 +10,26 @@ Please visit our [**webpage**](https://guytevet.github.io/mdm-page/) for more de
 
 ![teaser](https://github.com/GuyTevet/mdm-page/raw/main/static/figures/github.gif)
 
-#### Bibtex
-If you find this code useful in your research, please cite:
+## MDM is now 40X faster 🤩🤩🤩 (~0.4 sec/sample)
+
+### How come?!?
+
+(1) We released the [50 diffusion steps model](https://drive.google.com/file/d/1cfadR1eZ116TIdXK7qDX1RugAerEiJXr/view?usp=sharing) (instead of 1000 steps) which runs 20X faster with comparable results.
+
+(2) [Calling CLIP just once and caching the result](https://github.com/GuyTevet/motion-diffusion-model/commit/94c173ff8bb11362e45dd9262751f07bf9293660) runs 2X faster for all models. Please pull.
+
+## MDM results on *HumanML3D* to cite in your paper (The original model used in the MDM paper)
+
+Performance improvement is due to an evaluation bug fix. BLUE marks fixed entries compared to the paper.
+![fixed_results](assets/fixed_results.png)
+
+- You can use [this](assets/fixed_results.tex) `.tex` file.
+- The fixed **KIT** results are available [here](https://github.com/GuyTevet/motion-diffusion-model/issues/211#issue-2369160290).
+
+## Bibtex
+🔴🔴🔴**NOTE: MDM and MotionDiffuse are NOT the same paper!** For some reason, Google Scholar merged the two papers. The right way to cite MDM is:</span>
+
+<!-- If you find this code useful in your research, please cite: -->
 
 ```
 @inproceedings{
@@ -24,18 +42,13 @@ url={https://openreview.net/forum?id=SJ1kSyO2jwu}
 }
 ```
 
-## Checkout MDM Follow-ups (partial list)
-
-🐉 [SinMDM](https://sinmdm.github.io/SinMDM-page/) - Learns single motion motifs - even for non-humanoid characters.
-
-👯 [PriorMDM](https://priormdm.github.io/priorMDM-page/) - Uses MDM as a generative prior, enabling new generation tasks with few examples or even no data at all.
-
-🍏 [PhysDiff](https://nvlabs.github.io/PhysDiff/) - Adds physical guidance to MDM to generate more realistic results.
-
-💃 [EDGE](https://edge-dance.github.io/) - Learns music-to-dance motion with MDM and off-the-shelf audio encoder.
-
-
 ## News
+
+📢 **15/Apr/24** - Released a [50 diffusion steps model](https://drive.google.com/file/d/1cfadR1eZ116TIdXK7qDX1RugAerEiJXr/view?usp=sharing) (instead of 1000 steps) which runs 20X faster 🤩🤩🤩 with comparable results.
+
+📢 **12/Apr/24** - MDM inference is now 2X faster 🤩🤩🤩 This was made possible by [calling CLIP just once and caching the result](https://github.com/GuyTevet/motion-diffusion-model/commit/94c173ff8bb11362e45dd9262751f07bf9293660), and is backward compatible with older models.
+
+📢 **25/Jan/24** - Fixed bug in evalutation code (#182) - Please use the fixed results when citing MDM.<br>
 
 📢 **1/Jun/23** - Fixed generation issue (#104) - Please pull to improve generation results.
 
@@ -53,6 +66,20 @@ url={https://openreview.net/forum?id=SJ1kSyO2jwu}
   Note slight env changes adapting to the new code. If you already have an installed environment, run `bash prepare/download_glove.sh; pip install clearml` to adapt.
 
 📢 **6/Oct/22** - First release - sampling and rendering using pre-trained models.
+
+
+## Checkout MDM Follow-ups (partial list)
+
+🐉 [SinMDM](https://sinmdm.github.io/SinMDM-page/) - Learns single motion motifs - even for non-humanoid characters.
+
+👯 [PriorMDM](https://priormdm.github.io/priorMDM-page/) - Uses MDM as a generative prior, enabling new generation tasks with few examples or even no data at all.
+
+💃 [MAS](https://guytevet.github.io/mas-page/) - Generating intricate 3D motions (including non-humanoid) using 2D diffusion models trained on in-the-wild videos.
+
+🐒 [MoMo](https://monkeyseedocg.github.io/) - Monkey See, Monkey Do: Harnessing Self-attention in Motion Diffusion
+for Zero-shot Motion Transfer
+
+🏃 [CAMDM](https://github.com/AIGAnimation/CAMDM) - Taming Diffusion Probabilistic Models for Character Control - a real-time version of MDM.
 
 
 ## Getting started
@@ -178,7 +205,9 @@ Download the model(s) you wish to use, then unzip and place them in `./save/`.
 
 **HumanML3D**
 
-[humanml-encoder-512](https://drive.google.com/file/d/1PE0PK8e5a5j-7-Xhs5YET5U5pGh0c821/view?usp=sharing) (best model)
+[humanml-encoder-512-50steps](https://drive.google.com/file/d/1cfadR1eZ116TIdXK7qDX1RugAerEiJXr/view?usp=sharing) - Runs 20X faster with comparable performance!
+
+[humanml-encoder-512](https://drive.google.com/file/d/1PE0PK8e5a5j-7-Xhs5YET5U5pGh0c821/view?usp=sharing) (best model used in the paper)
 
 [humanml-decoder-512](https://drive.google.com/file/d/1q3soLadvVh7kJuJPd2cegMNY2xVuVudj/view?usp=sharing)
 
@@ -380,6 +409,7 @@ python -m train.train_mdm --save_dir save/my_name --dataset humanact12 --cond_ma
 ```
 </details>
 
+* Use `--diffusion_steps 50` to train the faster model with less diffusion steps.
 * Use `--device` to define GPU id.
 * Use `--arch` to choose one of the architectures reported in the paper `{trans_enc, trans_dec, gru}` (`trans_enc` is default).
 * Add `--train_platform_type {ClearmlPlatform, TensorboardPlatform}` to track results with either [ClearML](https://clear.ml/) or [Tensorboard](https://www.tensorflow.org/tensorboard).
