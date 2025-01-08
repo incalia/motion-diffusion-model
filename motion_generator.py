@@ -33,7 +33,7 @@ class MotionGenerator:
                          arch='trans_enc', emb_trans_dec=False, layers=8,
                          latent_dim=512, cond_mask_prob=0.1, lambda_rcxyz=0.0,
                          lambda_vel=0.0, lambda_fc=0.0, unconstrained=False,
-                         noise_schedule='cosine', diffusion_steps=1000,
+                         noise_schedule='cosine', diffusion_steps=50,
                          sigma_small=True)
         fixseed(args.seed)
         out_path = args.output_dir
