@@ -177,6 +177,18 @@ class MotionGenerator:
                 save_file = sample_file_template.format(sample_i, rep_i)
                 print(sample_print_template.format(caption, sample_i, rep_i, save_file))
                 animation_save_path = os.path.join(out_path, save_file)
+                
+                # Save motion data to CSV
+                csv_path = os.path.join(out_path, f'motion_{sample_i}_{rep_i}.csv')
+                with open(csv_path, 'w') as f:
+                    # Write header
+                    f.write('time_step,joint_id,x,y,z\n')
+                    # Write motion data
+                    for t in range(motion.shape[0]):  # For each timestep
+                        for j in range(motion.shape[1]):  # For each joint
+                            x, y, z = motion[t, j]
+                            f.write(f'{t},{j},{x},{y},{z}\n')
+                
                 plot_3d_motion(animation_save_path, skeleton, motion, dataset=args.dataset, title=caption, fps=fps)
                 # Credit for visualization: https://github.com/EricGuo5513/text-to-motion
                 rep_files.append(animation_save_path)
@@ -186,12 +198,13 @@ class MotionGenerator:
                                                   caption, num_samples_in_out_file, rep_files, sample_files, sample_i)
 
         abs_path = os.path.join(os.path.abspath(out_path), 'sample00.mp4')
-        print(f'[Done] Results are at [{abs_path}]')
-        return abs_path
+        csv_path = os.path.join(os.path.abspath(out_path), 'motion_0_0.csv')
+        print(f'[Done] Results are at [{abs_path}] and [{csv_path}]')
+        return abs_path, csv_path
 
 
 def main():
     motion_generator = MotionGenerator(
         model_path='./save/humanml_trans_enc_512/model000200000.pt'
         )
-    video_mp4_file_absolute_path = motion_generator.generate('man boxing')
+    video_mp4_file_absolute_path, csv_file_path = motion_generator.generate('man boxing')
