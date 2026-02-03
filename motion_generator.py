@@ -18,6 +18,47 @@ from data_loaders.tensors import collate
 from sample.generate import save_multiple_samples, load_dataset, construct_template_variables
 
 
+import chumpy as ch
+import inspect
+import sys
+from functools import wraps
+
+# Define your new function
+def my_depends_on(*dependencies):
+    deps = set()
+    for dep in dependencies:
+        if isinstance(dep, str):
+            deps.add(dep)
+        else:
+            [deps.add(d) for d in dep]
+
+    def _depends_on(func):
+        # Your modified logic here
+        want_out = 'out' in inspect.getargspec(func).args
+        if sys.version_info[0] <= 3 and sys.version_info[1] < 6:
+            want_out = 'out' in inspect.getargspec(func).args
+        else:
+            want_out = 'out' in inspect.getfullargspec(func).args
+
+        @wraps(func)
+        def with_caching(self, *args, **kwargs):
+            # Your modified caching logic here
+            func_name = func.__name__
+            sdf = self._depends_on_deps[func_name]
+            if sdf['out_of_date'] == True:
+                if want_out: 
+                    kwargs['out'] = sdf['value']
+                sdf['value'] = func(self, *args, **kwargs)
+                sdf['out_of_date'] = False
+            return sdf['value']
+        with_caching.deps = deps
+        result = property(with_caching)
+        return result
+    return _depends_on
+
+# Replace the function in the chumpy module
+ch.depends_on = my_depends_on
+
 class Namespace:
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
